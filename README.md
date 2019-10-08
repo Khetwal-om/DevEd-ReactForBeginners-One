@@ -66,3 +66,338 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+
+
+
+---
+
+
+1. App.js
+
+
+```javascript
+import React from 'react';
+import './App.css';
+import MovieList from './MovieList';
+function App() {
+  return (
+    <div className="App">
+      <MovieList/>
+   </div>
+  );
+}
+
+export default App;
+
+```
+
+
+
+---
+
+
+2. MovieList.js
+
+```javascript
+import React,{useState} from 'react';
+
+import Movie from './MOvie';
+
+const MovieList=()=>{
+
+
+    const [movies,setMovies]=useState([
+        {
+            name: 'Harry Potter',
+            price: '$10',
+            id: 2345
+        },
+        {
+            name: 'Champions League',
+            price: '$10',
+            id: 2345
+        },
+        {
+            name: 'Find me in Paris',
+            price: '$10',
+            id: 2345
+        }
+    ]);
+
+    return(
+        <div>
+            {movies.map(movie =>(
+               <Movie name={movie.name} price={movie.price} key={movie.id}/>
+            ))}
+        </div>
+    );
+};
+
+
+export default MovieList;
+
+```
+
+
+
+3. MOvie.js
+
+```javascript
+
+import React from 'react';
+const Movie=({name,price,key})=>{
+
+
+    return(
+        <div>
+            <h3> {name}</h3>
+            <p>{price}</p>
+        </div>
+    );
+};
+
+
+export default Movie;
+
+```
+
+
+
+2. Create a nav component,wanna show the name and list of movies
+
+
+ __MovieContext.js__
+ 
+```javascript
+import React,{useState,createContext} from 'react';
+import Nav from "./Nav";
+
+
+
+export const MovieContext = createContext();
+
+
+
+
+export const MovieProvider=(props)=>{
+
+    const [movies,setMovies]=useState([
+        {
+            name: 'Harry Potter',
+            price: '$10',
+            id: 2345
+        },
+        {
+            name: 'Champions League',
+            price: '$10',
+            id: 2345
+        },
+        {
+            name: 'Find me in Paris',
+            price: '$10',
+            id: 2345
+        }
+    ]);
+
+    return(
+        <MovieContext.Provider value={[movies,setMovies]}>
+            {props.children}
+        </MovieContext.Provider>
+    );
+
+}
+
+
+```
+
+
+
+ __MovieList.js__
+ 
+ ```javascript
+import React,{useState,useContext} from 'react';
+
+import Movie from './MOvie';
+import {MovieContext} from "./MovieContext";
+
+const MovieList=()=>{
+
+    const [movies,setMovies]=useContext(MovieContext);
+    return(
+        <div>
+                {movies.map(movie=>(
+                    <Movie name={movie.name} price={movie.price} key={movie.id}/>
+                     ))}
+
+        </div>
+    );
+};
+
+
+export default MovieList;
+
+```
+
+
+__Movie.js__
+
+```javascript
+import React from 'react';
+
+
+
+
+const Movie=({name,price,key})=>{
+
+
+    return(
+        <div>
+            <h3> {name}</h3>
+            <p>{price}</p>
+        </div>
+    );
+};
+
+
+export default Movie;
+
+```
+
+__Nav.js__
+
+
+```javascript
+import React from 'react';
+
+
+
+
+const Nav=({name,price,key})=>{
+
+
+    return(
+        <div>
+            <h3>LOTO</h3>
+            <p>List of Movies:</p>
+        </div>
+    );
+};
+
+
+export default Nav;
+
+```
+
+__App.js__
+
+```javascript
+import React from 'react';
+import './App.css';
+import MovieList from './MovieList';
+import Nav from './Nav';
+import {MovieProvider} from './MovieContext';
+
+function App() {
+  return (
+      <MovieProvider>
+    <div className="App">
+        <Nav/>
+        <MovieList/>
+
+   </div>
+      </MovieProvider>
+  );
+}
+
+export default App;
+
+```
+
+
+
+
+### Can import it in Nav.js too
+
+
+:heart:    :yellow_heart:       Bhaiya ONE time investment h
+
+```javascript
+import React,{useContext} from 'react';
+
+import {MovieContext} from "./MovieContext";
+
+
+const Nav=()=>{
+
+    const [movies,setMovies]=useContext(MovieContext);
+    return(
+        <div>
+            <h3>LOTO</h3>
+            <p>List of Movies:  {movies.length}</p>
+        </div>
+    );
+};
+
+
+export default Nav;
+
+```
+
+
+
+
+### Let's create a component that will create additional movies to our list
+
+__we can also pass function in our context and use it *wherever* we want__
+
+
+  > AddMovie.js
+
+```javascript
+import React,{useState,useContext} from 'react';
+import {MovieContext} from "./MovieContext";
+
+//useState  because I wanna render out two inputs
+
+
+
+
+
+const AddMovie=()=>{
+
+    const [name,setName]=useState('');
+    const [price,setPrice]=useState('');
+    const [movies,setMovies]=useContext(MovieContext);
+
+    const updateName=e=>{
+        setName(e.target.value);
+    };
+
+
+    const updatePrice=e=>{
+        setPrice(e.target.value);
+    };
+
+    const addMovie= e =>{
+        e.preventDefault();
+        //we also have access to the latest update movie
+        //...preMovies array of objects *copy
+        setMovies(prevMovies=>[...prevMovies,{name:name,price:price}]);
+    };
+
+
+    return(
+        <form onSubmit={addMovie}>
+            <input type={"text"} name={"name"} value={name} onChange={updateName}/>
+            <input type={"text"} name={"price"} value={price} onChange={updatePrice}/>
+            <button>Submit</button>
+        </form>
+    );
+}
+
+
+export default AddMovie
+
+```

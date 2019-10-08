@@ -1,5 +1,14 @@
+*{
+  background-color: teal;
+  margin: 10px;
+  padding: 10px;
+}
+
+
 .App {
   text-align: center;
+  border-radius: 16px;
+  border: 2px solid bisque;
 }
 
 .App-logo {
